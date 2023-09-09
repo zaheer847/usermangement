@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+  <!-- Main content section -->
+  <h1>Welcome to Our Online Store</h1>
+  
+  <!-- Display a greeting if the user is authenticated -->
+  {% if user.is_authenticated %}
+    <h2>Hello {{ user.first_name }}</h2>
+  {% endif %}
+  
+  <!-- Product cards section -->
+  <div class="row">
+    {% for product in products %}
+      <div class="col-lg-4 col-md-6 mb-4">
+        <!-- Product card with Bootstrap styling -->
+        <div class="card h-100">
+          <img class="card-img-top" src="{% static 'cart.png' %}" alt="{{ product.name }}">
+          <div class="card-body">
+            <h5 class="card-title">{{ product.name }}</h5>
+            <p class="card-text">{{ product.description }}</p>
+            <p class="card-text">Category: {{ product.category }}</p>
+            <p class="card-text">Price: ${{ product.price }}</p>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% endblock %}
+
