@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Contact Us</h1>
+    <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-message" style="display: none;">
+        Your message has been sent successfully!
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert" id="error-message" style="display: none;">
+        An error occurred while sending your message. Please try again.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <form id="contact-form" method="post"  class="needs-validation" novalidate>
+        {% csrf_token %}
+
+        <div class="mb-3">
+            <input type="text" class="form-control" name="name" placeholder="Name" required>
+        </div>
+        <div class="mb-3">
+            <input type="email" class="form-control" name="email" placeholder="Email" required>
+        </div>
+        <div class="mb-3">
+            <input type="text" class="form-control" name="subject" placeholder="Subject" required>
+        </div>
+        <div class="mb-3">
+            <textarea class="form-control" name="message" placeholder="Message" required></textarea>
+        </div>
+
+        <!-- JWT token will be added here -->
+        <input type="hidden" id="jwt-token" name="Authorization" value="">
+
+        <button type="button" class="btn btn-primary" onclick="fetchAndSubmitForm()">Submit</button>
+    </form>
+
+    <script>
+        /**
+         * Fetches a JWT token from the server and submits the contact form with the token in the headers.
+         */
+        async function fetchAndSubmitForm() {
+            try {
+                // Check if the form is valid
+                if (document.getElementById('contact-form').checkValidity()) {
+                    // Fetch the JWT token from the server
+                    const response = await fetch('/api/get-jwt-token');
+                    const tokenjson = await response.json();
+                    const token = await tokenjson['token'];
+    
+                    // Set up the fetch request to send the JWT token in the headers
+                    const headers = new Headers({
+                        'Authorization': 'Bearer ' + token
+                    });
+                   
+                    const formData = new FormData(document.getElementById('contact-form'));
+                    
+                    // Make the POST request with the JWT token in the headers
+                    const postResponse = await fetch('/contact-us/', {
+                        method: 'POST',
+                        headers: headers,
+                        body: formData
+                    });
+    
+                    // Handle the response as needed
+                    if (postResponse.ok) {
+                        
+                        // Success: Your message has been sent successfully
+                        console.log('Message sent successfully');
+                        // You can redirect or display a success message here
+    
+                        // Display the Bootstrap alert
+                        const successMessage = document.getElementById('success-message');
+                        successMessage.style.display = 'block';
+    
+                        // Reset the form after a few seconds
+                        setTimeout(() => {
+                            successMessage.style.display = 'none'; // Hide the Bootstrap alert
+                            document.getElementById('contact-form').reset(); // Reset the form
+                        }, 3000); // 3000 milliseconds (3 seconds)
+    
+                    } else {
+                        // Handle the error response here
+                        console.error('Error sending message:', postResponse.statusText);
+                        // You can display an error message to the user
+                        
+                        // Display the Bootstrap error alert
+                        const errorMessage = document.getElementById('error-message');
+                        errorMessage.style.display = 'block';
+                    }
+                } else {
+                    // Form is invalid, show validation error messages
+                    document.getElementById('contact-form').classList.add('was-validated');
+                }
+            } catch (error) {
+                console.error('Error fetching JWT token or sending message:', error);
+            }
+        }
+    </script>
+{% endblock %}

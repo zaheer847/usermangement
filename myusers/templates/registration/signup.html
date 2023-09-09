@@ -1,0 +1,28 @@
+
+{% extends 'base.html' %}
+
+{% block content %}
+    <!--
+        This is the signup form template.
+        It uses Bootstrap 5 for styling and layout.
+
+        - The form is centered within a container.
+        - Form fields are styled using Bootstrap classes.
+        - "Sign Up" button is styled with a primary button class.
+        - Margin classes provide spacing for better visual separation.
+    -->
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-4">
+                <h2 class="mt-5 mb-4">Sign Up</h2>
+                <form method="post" class="mb-4">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        {{ form.as_p }}
+                    </div>
+                    <button type="submit" class="btn btn-primary">Sign Up</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

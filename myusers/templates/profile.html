@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block style %}
+<style>
+    .helptext {
+        display: none !important;
+    }
+    #id_password {
+        display: none !important;
+    }
+    form > p:nth-of-type(5){
+        display: none !important;
+    }
+</style>
+{% endblock %}
+{% block content %}
+<h2>Your Profile</h2>
+<form method="post" enctype="multipart/form-data">
+    <div class="form-group">
+    {% csrf_token %}
+    {{ user_form.as_p }}
+    {{ profile_form.as_p }}
+    <button type="submit">Update Profile</button>
+</div>
+</form>
+{% endblock %}
